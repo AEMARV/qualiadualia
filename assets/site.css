@@ -20,3 +20,9 @@
 .sqs-html-content h3 {
   font-family: "orpheus-display", "Cormorant Garamond", serif;
 }
+
+/* Five menu items: keep them on one line where there is room beside the logo. */
+@media (min-width: 1280px) {
+  .header-nav-list { flex-wrap: nowrap; }
+  .header-nav-item { white-space: nowrap; }
+}
