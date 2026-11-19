@@ -659,18 +659,67 @@
     update();
   })();
 
-  /* Vehicles: alone or cooperative */
+  /* Vehicles: cooperative perception with real line of sight */
   (function () {
     var svg = document.getElementById("coop-svg");
     if (!svg) return;
-    var status = document.getElementById("coop-status");
-    function set(mode) {
-      svg.classList.toggle("is-alone", mode === "alone");
-      status.textContent = mode === "alone" ? "Car A: nothing behind the truck" : "Car A: pedestrian detected, through car B";
-      svg.parentNode.querySelectorAll("[data-coop]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.coop === mode ? "true" : "false"); });
+    var fig = svg.parentNode, slider = document.getElementById("coop-drive"), out = document.getElementById("coop-drive-out");
+    var status = document.getElementById("coop-status"), carA = document.getElementById("coop-car-a");
+    var fovA = document.getElementById("coop-fov-a"), fovB = document.getElementById("coop-fov-b");
+    var link = document.getElementById("coop-link"), linkT = document.getElementById("coop-link-t");
+    var box = document.getElementById("coop-box"), ped = document.getElementById("coop-ped");
+    var walls = [{ x0: 20, y0: 20, x1: 390, y1: 142 }, { x0: 470, y0: 20, x1: 620, y1: 142 }, { x0: 20, y0: 218, x1: 390, y1: 300 }, { x0: 470, y0: 218, x1: 620, y1: 300 }];
+    var P = { x: 418, y: 84 }, B = { x: 445, y: 250 }, mode = "coop";
+    function blocked(x, y) {
+      if (x < 0 || x > 640 || y < 0 || y > 320) return true;
+      for (var i = 0; i < walls.length; i += 1) { var w = walls[i]; if (x > w.x0 && x < w.x1 && y > w.y0 && y < w.y1) return true; }
+      return false;
     }
-    svg.parentNode.querySelectorAll("[data-coop]").forEach(function (b) { b.addEventListener("click", function () { set(b.dataset.coop); }); });
-    set("coop");
+    function cast(o, ang, range) {
+      var dx = Math.cos(ang), dy = Math.sin(ang), d = 0;
+      while (d < range) { d += 3; if (blocked(o.x + dx * d, o.y + dy * d)) break; }
+      return { x: o.x + dx * d, y: o.y + dy * d };
+    }
+    function fan(o, head, half, range) {
+      var d = "M" + o.x.toFixed(1) + " " + o.y.toFixed(1);
+      for (var k = 0; k <= 180; k += 1) {
+        var p = cast(o, head - half + 2 * half * k / 180, range);
+        d += " L" + p.x.toFixed(1) + " " + p.y.toFixed(1);
+      }
+      return d + " Z";
+    }
+    function sees(o, head, half, range, t) {
+      var dx = t.x - o.x, dy = t.y - o.y, dist = Math.sqrt(dx * dx + dy * dy);
+      var ang = Math.atan2(dy, dx) - head;
+      while (ang > Math.PI) ang -= 2 * Math.PI;
+      while (ang < -Math.PI) ang += 2 * Math.PI;
+      if (Math.abs(ang) > half || dist > range) return false;
+      for (var s2 = 6; s2 < dist - 8; s2 += 3) if (blocked(o.x + dx * s2 / dist, o.y + dy * s2 / dist)) return false;
+      return true;
+    }
+    var HA = 0, HALF_A = Math.PI, RA = 300, HB = -Math.PI / 2, HALF_B = Math.PI, RB = 230;
+    function update() {
+      var A = { x: 50 + slider.value / 100 * 350, y: 196 };
+      carA.setAttribute("transform", "translate(" + A.x.toFixed(1) + " " + A.y + ")");
+      fovA.setAttribute("d", fan({ x: A.x, y: A.y }, HA, HALF_A, RA));
+      fovB.setAttribute("d", fan({ x: B.x, y: B.y }, HB, HALF_B, RB));
+      var own = sees({ x: A.x, y: A.y }, HA, HALF_A, RA, P), viaB = sees({ x: B.x, y: B.y }, HB, HALF_B, RB, P);
+      var coop = mode === "coop";
+      var known = own || (coop && viaB);
+      var cx = (A.x + B.x) / 2 - 40, cy = A.y + 105;
+      link.setAttribute("d", "M" + (B.x - 12) + " " + (B.y + 4) + " Q " + cx + " " + cy + " " + A.x + " " + (A.y + 12));
+      linkT.setAttribute("x", (0.25 * (B.x - 12) + 0.5 * cx + 0.25 * A.x).toFixed(1)); linkT.setAttribute("y", (0.25 * (B.y + 4) + 0.5 * cy + 0.25 * (A.y + 12) + 16).toFixed(1));
+      svg.classList.toggle("is-alone", !coop);
+      box.style.opacity = known ? 1 : 0;
+      box.setAttribute("class", own ? "s-detect s-detect-own" : "s-detect");
+      ped.setAttribute("class", known ? "s-ped" : "s-ped s-ped-hidden");
+      status.textContent = own ? "Car A sees the pedestrian itself" : known ? "Car A knows about the pedestrian, through car B" : "Car A: the pedestrian is hidden by the building";
+      out.textContent = own ? "in view" : "blind spot";
+      fig.querySelectorAll("[data-coop]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.coop === mode ? "true" : "false"); });
+    }
+    fig.querySelectorAll("[data-coop]").forEach(function (b) { b.addEventListener("click", function () { mode = b.dataset.coop; update(); }); });
+    slider.addEventListener("input", update);
+    update();
   })();
 
   /* Show or fold every proof at once */
