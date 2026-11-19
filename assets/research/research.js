@@ -42,9 +42,28 @@
   var panels = {};
   tabs.forEach(function (t) { panels[t.dataset.tab] = document.getElementById(t.dataset.tab); });
 
+  var groups = Array.prototype.slice.call(root.querySelectorAll(".rw-toc-group"));
+  function setGroup(g, open) {
+    var head = g.querySelector(".rw-group-head"), body = g.querySelector(".rw-group-body");
+    head.setAttribute("aria-expanded", open ? "true" : "false");
+    body.hidden = !open;
+    g.classList.toggle("is-open", open);
+  }
+  groups.forEach(function (g) {
+    g.querySelector(".rw-group-head").addEventListener("click", function () {
+      var open = g.querySelector(".rw-group-head").getAttribute("aria-expanded") !== "true";
+      setGroup(g, open);
+      if (open) {
+        var first = g.querySelector(".rw-tab");
+        if (first && !g.querySelector('.rw-tab[aria-selected="true"]')) select(first.dataset.tab, { hash: true, scroll: true });
+      }
+    });
+  });
+
   function select(id, opts) {
     opts = opts || {};
     if (!panels[id]) return;
+    groups.forEach(function (g) { if (g.querySelector('[data-tab="' + id + '"]')) setGroup(g, true); });
     tabs.forEach(function (t) {
       var on = t.dataset.tab === id;
       t.setAttribute("aria-selected", on ? "true" : "false");
@@ -67,6 +86,7 @@
     t.addEventListener("click", function () { select(t.dataset.tab, { hash: true, scroll: true }); });
     t.addEventListener("keydown", function (e) {
       var n = tabs.length, j = null;
+      i = tabs.indexOf(t);
       if (e.key === "ArrowDown" || e.key === "ArrowRight") j = (i + 1) % n;
       else if (e.key === "ArrowUp" || e.key === "ArrowLeft") j = (i + n - 1) % n;
       else if (e.key === "Home") j = 0;
@@ -173,49 +193,74 @@
     update();
   })();
 
-  /* Probabilistic optimization on a staircase */
+  /* Probabilistic optimization on three hard objectives */
   (function () {
     var svg = document.getElementById("po-svg");
     if (!svg) return;
-    var XL = -2.5, XR = 2.6, YB = -8, YT = 10, PX0 = 50, PX1 = 620, PY0 = 300, PY1 = 20;
-    function sx(x) { return PX0 + (x - XL) / (XR - XL) * (PX1 - PX0); }
-    function sy(y) { return PY0 - (y - YB) / (YT - YB) * (PY0 - PY1); }
-    function f(x) { var y = x * x * x * x - 4 * x * x + 2 * x; y = Math.floor(y * 4) / 4; return Math.min(y, 10); }
-    var axes = document.getElementById("po-axes");
-    el("line", { x1: PX0, y1: sy(0), x2: PX1, y2: sy(0), "class": "s-dash" }, axes);
-    txt(axes, PX1, sy(0) + 18, "f = 0", "s-label s-dim", "end");
-    var d = "", prev = null;
-    for (var i = 0; i <= 1020; i += 1) {
-      var x = XL + (XR - XL) * i / 1020, y = f(x);
-      if (prev === null) d += "M" + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
-      else if (y !== prev) d += " L" + sx(x).toFixed(1) + " " + sy(prev).toFixed(1) + " L" + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
-      prev = y;
-    }
-    d += " L" + sx(XR).toFixed(1) + " " + sy(prev).toFixed(1);
-    document.getElementById("po-f").setAttribute("d", d);
+    var OBJ = {
+      valleys: {
+        f: function (x) { var y = x * x * x * x - 4 * x * x + 2 * x; y = Math.floor(y * 4) / 4; return Math.min(y, 10); },
+        XL: -2.5, XR: 2.6, YB: -8, YT: 10, mu0: 2.0, sd0: 0.5, clip: 0.3, sdMax: 3.3, alpha: 2, gdH: 1e-4, gdLr: 0.01,
+        cap: "x⁴ − 4x² + 2x, cut into fine steps: the toy from my notebook. Two valleys, the deeper one on the left. Both start at x = 2. Gradient descent sits on a flat step and never moves. Without MPT the bell collapses into the shallow valley; with MPT it stays wide, finds the deep one, and only then narrows."
+      },
+      stairs: {
+        f: function (x) { return Math.floor(x * x * 0.1) / 0.1; },
+        XL: -10, XR: 10, YB: -5, YT: 100, mu0: 8, sd0: 1, clip: 1, sdMax: 6, alpha: 1.1, gdH: 1e-4, gdLr: 0.01, speed: 32, maxIter: 500,
+        cap: "A quadratic turned into a staircase: discrete, with a derivative that is zero on every step and infinite at every edge. Gradient descent has nothing to follow. The sampling distribution does not need a derivative, it walks down the stairs to the flat bottom."
+      },
+      noisy: {
+        f: function (x) { return x * x + Math.random() * 10; },
+        XL: -10, XR: 10, YB: -5, YT: 110, mu0: 8, sd0: 1, clip: 1, sdMax: 6, alpha: 1.1, gdH: 0.01, gdLr: 0.002, noisy: true, speed: 32, maxIter: 500,
+        cap: "x² plus noise ten times larger than the slope near the minimum, drawn fresh at every evaluation. The function is bounded, but its derivative is not: gradient descent, estimating slopes from two nearby evaluations, is thrown around by the noise. The sampling distribution averages the noise away inside its neighbourhood and settles at the bottom."
+      }
+    };
+    var key = "valleys", O = OBJ[key], PX0 = 50, PX1 = 620, PY0 = 300, PY1 = 20;
+    function sx(x) { return PX0 + (x - O.XL) / (O.XR - O.XL) * (PX1 - PX0); }
+    function sy(y) { return PY0 - (Math.max(O.YB, Math.min(O.YT, y)) - O.YB) / (O.YT - O.YB) * (PY0 - PY1); }
+    var axes = document.getElementById("po-axes"), fpath = document.getElementById("po-f");
     var bell = document.getElementById("po-bell"), muDot = document.getElementById("po-mu"), gdDot = document.getElementById("po-gd");
     var sampG = document.getElementById("po-samples"), readout = document.getElementById("po-readout");
-    var playBtn = document.getElementById("po-play");
-    var N = 200, lr = 0.1, alpha = 2, mu, pp, gd, iter, playing = !reduceMotion, acc = 0, dots = [];
+    var playBtn = document.getElementById("po-play"), cap = document.getElementById("po-cap");
+    var N = 200, lr = 0.1, useMPT = true, mu, pp, gd, iter, playing = !reduceMotion, acc = 0, dots = [];
     for (var j = 0; j < 40; j += 1) dots.push(el("circle", { r: 2.6, "class": "s-samp" }, sampG));
     function randn() { var u = 1 - Math.random(), v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
-    function reset() { mu = 2.0; pp = Math.log(2); gd = 2.0; iter = 0; draw([]); }
+    function alpha() { return useMPT ? O.alpha : 1; }
+    function drawF() {
+      clear(axes);
+      el("line", { x1: PX0, y1: sy(0), x2: PX1, y2: sy(0), "class": "s-dash" }, axes);
+      txt(axes, PX1, sy(0) + 18, "f = 0", "s-label s-dim", "end");
+      var d = "", prev = null, i, x, y;
+      if (O.noisy) {
+        for (i = 0; i <= 400; i += 1) { x = O.XL + (O.XR - O.XL) * i / 400; d += (i ? " L" : "M") + sx(x).toFixed(1) + " " + sy(O.f(x)).toFixed(1); }
+      } else {
+        for (i = 0; i <= 1020; i += 1) {
+          x = O.XL + (O.XR - O.XL) * i / 1020; y = O.f(x);
+          if (prev === null) d += "M" + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
+          else if (y !== prev) d += " L" + sx(x).toFixed(1) + " " + sy(prev).toFixed(1) + " L" + sx(x).toFixed(1) + " " + sy(y).toFixed(1);
+          prev = y;
+        }
+        d += " L" + sx(O.XR).toFixed(1) + " " + sy(prev).toFixed(1);
+      }
+      fpath.setAttribute("d", d);
+      cap.textContent = O.cap;
+    }
+    function reset() { mu = O.mu0; pp = Math.log(1 / O.sd0); gd = O.mu0; iter = 0; drawF(); draw([]); }
     function step() {
-      var prec = Math.exp(pp), xs = [], e = [], ev = [], k;
-      for (k = 0; k < N; k += 1) { var x = mu + randn() / prec; xs.push(x); e.push(-Math.pow((x - mu) * prec, 2) / 2); ev.push(-f(x)); }
-      var mL = Math.max.apply(null, ev), mR = Math.max.apply(null, e.map(function (v) { return (alpha - 1) * v; }));
-      var L = ev.map(function (v) { return Math.exp(v - mL); }), R = e.map(function (v) { return Math.exp((alpha - 1) * v - mR); });
-      var sL = L.reduce(function (a, b) { return a + b; }, 0), sR = R.reduce(function (a, b) { return a + b; }, 0);
+      var prec = Math.exp(pp), xs = [], e = [], ev = [], k, a = alpha();
+      for (k = 0; k < N; k += 1) { var x = mu + randn() / prec; xs.push(x); e.push(-Math.pow((x - mu) * prec, 2) / 2); ev.push(-O.f(x)); }
+      var mL = Math.max.apply(null, ev), mR = Math.max.apply(null, e.map(function (v) { return (a - 1) * v; }));
+      var L = ev.map(function (v) { return Math.exp(v - mL); }), R = e.map(function (v) { return Math.exp((a - 1) * v - mR); });
+      var sL = L.reduce(function (p, q) { return p + q; }, 0), sR = R.reduce(function (p, q) { return p + q; }, 0);
       var dmu = 0, dpp = 0;
       for (k = 0; k < N; k += 1) {
         var G = L[k] / sL - R[k] / sR, dx = xs[k] - mu;
         dmu += G * dx * prec * prec;
         dpp += G * (-dx * dx * prec * prec);
       }
-      mu += Math.max(-0.3, Math.min(0.3, lr * dmu));
-      pp = Math.max(Math.log(0.3), Math.min(Math.log(40), pp + Math.max(-0.3, Math.min(0.3, lr * dpp))));
-      var g = (f(gd + 1e-4) - f(gd - 1e-4)) / 2e-4;
-      if (Math.abs(g) < 1e3) gd -= 0.01 * g;
+      mu += Math.max(-O.clip, Math.min(O.clip, lr * dmu));
+      pp = Math.max(Math.log(1 / O.sdMax), Math.min(Math.log(40), pp + Math.max(-0.3, Math.min(0.3, lr * dpp))));
+      var g = (O.f(gd + O.gdH) - O.f(gd - O.gdH)) / (2 * O.gdH);
+      if (Math.abs(g) < 1e3 || O.noisy) gd = Math.max(O.XL, Math.min(O.XR, gd - Math.max(-1.5, Math.min(1.5, O.gdLr * g))));
       iter += 1;
       draw(xs);
     }
@@ -224,40 +269,47 @@
       for (var i = 0; i <= 160; i += 1) {
         var x = mu - 4 * sd + 8 * sd * i / 160;
         var dens = Math.exp(-0.5 * Math.pow((x - mu) / sd, 2));
-        var xx = Math.max(PX0, Math.min(PX1, sx(x)));
-        b += (i ? " L" : "M") + xx.toFixed(1) + " " + (PY0 - dens * 90).toFixed(1);
+        b += (i ? " L" : "M") + Math.max(PX0, Math.min(PX1, sx(x))).toFixed(1) + " " + (PY0 - dens * 90).toFixed(1);
       }
       bell.setAttribute("d", b + " Z");
       dots.forEach(function (c, i) {
-        if (i < xs.length && xs[i] > XL && xs[i] < XR) {
-          c.setAttribute("cx", sx(xs[i]).toFixed(1)); c.setAttribute("cy", sy(f(xs[i])).toFixed(1)); c.style.display = "";
+        if (i < xs.length && xs[i] > O.XL && xs[i] < O.XR) {
+          c.setAttribute("cx", sx(xs[i]).toFixed(1)); c.setAttribute("cy", sy(O.f(xs[i])).toFixed(1)); c.style.display = "";
         } else c.style.display = "none";
       });
-      muDot.setAttribute("cx", sx(mu)); muDot.setAttribute("cy", sy(f(mu)));
-      gdDot.setAttribute("cx", sx(gd)); gdDot.setAttribute("cy", sy(f(gd)) - 14);
-      readout.innerHTML = "step <b>" + iter + "</b> &nbsp;·&nbsp; mean <b>" + mu.toFixed(2) + "</b>, f = <b>" + f(mu).toFixed(2) +
-        "</b> &nbsp;·&nbsp; width σ = <b>" + sd.toFixed(2) + "</b> &nbsp;·&nbsp; gradient descent: f = " + f(gd).toFixed(2) + ", stuck";
+      muDot.setAttribute("cx", sx(mu)); muDot.setAttribute("cy", sy(O.f(mu)));
+      gdDot.setAttribute("cx", sx(gd)); gdDot.setAttribute("cy", sy(O.f(gd)) - 14);
+      readout.innerHTML = "step <b>" + iter + "</b> &nbsp;·&nbsp; α = <b>" + alpha() + "</b> &nbsp;·&nbsp; mean <b>" + mu.toFixed(2) +
+        "</b> &nbsp;·&nbsp; width σ = <b>" + sd.toFixed(2) + "</b> &nbsp;·&nbsp; gradient descent at x = " + gd.toFixed(2);
     }
     function syncBtn() { playBtn.textContent = playing ? "Pause" : "Play"; playBtn.setAttribute("aria-pressed", playing ? "true" : "false"); }
-    playBtn.addEventListener("click", function () { playing = !playing; if (playing && iter >= 400) reset(); syncBtn(); kick(); });
+    playBtn.addEventListener("click", function () { playing = !playing; if (playing && iter >= (O.maxIter || 400)) reset(); syncBtn(); kick(); });
     document.getElementById("po-reset").addEventListener("click", function () { reset(); kick(); });
-    svg.parentNode.querySelectorAll("[data-po-alpha]").forEach(function (b) {
+    var fig = svg.parentNode;
+    fig.querySelectorAll("[data-po-mpt]").forEach(function (b) {
       b.addEventListener("click", function () {
-        alpha = Number(b.dataset.poAlpha);
-        svg.parentNode.querySelectorAll("[data-po-alpha]").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
-        reset(); kick();
+        useMPT = b.dataset.poMpt === "on";
+        fig.querySelectorAll("[data-po-mpt]").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        reset(); playing = true; syncBtn(); kick();
+      });
+    });
+    fig.querySelectorAll("[data-po-obj]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        key = b.dataset.poObj; O = OBJ[key];
+        fig.querySelectorAll("[data-po-obj]").forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
+        reset(); playing = true; syncBtn(); kick();
       });
     });
     loops.push({
       active: function () { return playing && visible("optimization"); },
       step: function (dt) {
-        acc += dt * 14;
+        acc += dt * (O.speed || 14);
         while (acc >= 1) { step(); acc -= 1; }
-        if (iter >= 400) { playing = false; syncBtn(); }
+        if (iter >= (O.maxIter || 400)) { playing = false; syncBtn(); }
       }
     });
     reset();
-    if (reduceMotion) { for (var n = 0; n < 300; n += 1) step(); }
+    if (reduceMotion) { for (var n = 0; n < 400; n += 1) step(); }
     syncBtn();
   })();
 
@@ -605,6 +657,33 @@
     }
     s.addEventListener("input", update);
     update();
+  })();
+
+  /* Vehicles: alone or cooperative */
+  (function () {
+    var svg = document.getElementById("coop-svg");
+    if (!svg) return;
+    var status = document.getElementById("coop-status");
+    function set(mode) {
+      svg.classList.toggle("is-alone", mode === "alone");
+      status.textContent = mode === "alone" ? "Car A: nothing behind the truck" : "Car A: pedestrian detected, through car B";
+      svg.parentNode.querySelectorAll("[data-coop]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.coop === mode ? "true" : "false"); });
+    }
+    svg.parentNode.querySelectorAll("[data-coop]").forEach(function (b) { b.addEventListener("click", function () { set(b.dataset.coop); }); });
+    set("coop");
+  })();
+
+  /* Show or fold every proof at once */
+  (function () {
+    var t = document.getElementById("rw-proofs");
+    if (!t) return;
+    var all = root.querySelectorAll(".rw-proof");
+    t.addEventListener("click", function () {
+      var on = t.getAttribute("aria-pressed") !== "true";
+      all.forEach(function (d) { d.open = on; });
+      t.setAttribute("aria-pressed", on ? "true" : "false");
+      t.textContent = on ? "Fold all proofs" : "Show all proofs";
+    });
   })();
 
   fromHash();

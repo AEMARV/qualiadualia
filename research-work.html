@@ -328,11 +328,17 @@
 <p class="rw-kicker"><a href="/research">Research</a> <span aria-hidden="true">/</span> the work itself</p>
 <h1>The Research, One Idea at a Time</h1>
 <p class="rw-lede">One line of work per tab. The boxes marked <span class="rw-theory-chip">Theory</span> hold the mathematics, the rest is how I think about it, and every tab has something you can play with. If you want the story of how I got here, with the cigarettes on the staircase and all, it is on the <a href="/research-bio">Research Bio</a> page.</p>
+<div class="rw-intro-tools">
+<button aria-pressed="false" class="rw-chip rw-proofs-toggle" id="rw-proofs" type="button">Show all proofs</button>
+<span class="rw-intro-hint">The theorems are proved where they appear, folded away until you open them.</span>
+</div>
 </header>
 <div class="rw-layout">
 <nav aria-label="Research topics" class="rw-toc">
 <div class="rw-toc-head">Table of contents</div>
-<div aria-orientation="vertical" class="rw-toc-list" role="tablist">
+<div class="rw-toc-group is-open">
+<button aria-controls="grp-foundations" aria-expanded="true" class="rw-group-head" type="button"><span class="rw-group-name">ML Foundations</span></button>
+<div aria-orientation="vertical" class="rw-group-body" id="grp-foundations" role="tablist">
 <button aria-controls="mpt" aria-selected="true" class="rw-tab rw-tab-main" data-tab="mpt" id="tab-mpt" role="tab">
 <span class="rw-tab-title">Maximum Probability Theorem</span>
 <span class="rw-tab-note">The main story</span>
@@ -344,8 +350,8 @@
 <span class="rw-tab-title">Generalized Rejection Sampling</span>
 </button>
 <button aria-controls="bica" aria-selected="false" class="rw-tab" data-tab="bica" id="tab-bica" role="tab" tabindex="-1">
-<span class="rw-tab-title">Binary ICA</span>
-<span class="rw-tab-note rw-tab-note-blue">Working on it now</span>
+<span class="rw-tab-title">Binary ICA: Bit Level AI</span>
+<span class="rw-tab-note rw-tab-note-blue">Energy efficient AI · now</span>
 </button>
 <button aria-controls="ood" aria-selected="false" class="rw-tab" data-tab="ood" id="tab-ood" role="tab" tabindex="-1">
 <span class="rw-tab-title">Out of Distribution, Generalization, Robustness</span>
@@ -359,6 +365,28 @@
 <button aria-controls="code" aria-selected="false" class="rw-tab" data-tab="code" id="tab-code" role="tab" tabindex="-1">
 <span class="rw-tab-title">Papers and Code</span>
 </button>
+</div>
+</div>
+<div class="rw-toc-group">
+<button aria-controls="grp-applied" aria-expanded="false" class="rw-group-head" type="button"><span class="rw-group-name">Applied ML</span></button>
+<div aria-orientation="vertical" class="rw-group-body" hidden="" id="grp-applied" role="tablist">
+<button aria-controls="vehicles" aria-selected="false" class="rw-tab" data-tab="vehicles" id="tab-vehicles" role="tab" tabindex="-1">
+<span class="rw-tab-title">Vehicular Perception</span>
+<span class="rw-tab-note rw-tab-note-grey">Best paper, VTC 2020</span>
+</button>
+</div>
+</div>
+<div class="rw-toc-group">
+<button aria-controls="grp-platforms" aria-expanded="false" class="rw-group-head" type="button"><span class="rw-group-name">Platforms</span></button>
+<div aria-orientation="vertical" class="rw-group-body" hidden="" id="grp-platforms" role="tablist">
+<button aria-controls="geoopinions" aria-selected="false" class="rw-tab" data-tab="geoopinions" id="tab-geoopinions" role="tab" tabindex="-1">
+<span class="rw-tab-title">Geography of Opinions</span>
+</button>
+<button aria-controls="artament" aria-selected="false" class="rw-tab" data-tab="artament" id="tab-artament" role="tab" tabindex="-1">
+<span class="rw-tab-title">Artament</span>
+<span class="rw-tab-note rw-tab-note-grey">Coming soon</span>
+</button>
+</div>
 </div>
 </nav>
 <div class="rw-panels">
@@ -410,6 +438,35 @@
 <span class="v">P</span><sub>α</sub>(<span class="v">M</span>) = <span class="big">(</span> Σ<sub><span class="v">z</span></sub> <span class="big">(</span><span class="frac"><span class="num"><span class="v">P</span>(<span class="v">z</span>)</span><span class="den"><span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span>)</span></span><span class="big">)</span><sup>−α</sup> <span class="big">)</span><sup>−1/α</sup>
 </div>
 </aside>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Theorem 1 · Proof</span><span class="rw-proof-title">The Maximum Probability Theorem</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>For any event σ and any outcome v of V, the law of total probability splits P(v) over σ and its complement σ̄:</p>
+<div class="rw-eq"><span class="v">P</span>(<span class="v">v</span>) = <span class="v">P</span>(<span class="v">v</span> | σ) <span class="v">P</span>(σ) + <span class="v">P</span>(<span class="v">v</span> | σ̄) <span class="v">P</span>(σ̄)</div>
+<p>The second term is never negative, so P(v) ≥ P(v | σ) P(σ). Wherever P(v | σ) ≠ 0 we can divide:</p>
+<div class="rw-eq"><span class="v">P</span>(σ) ≤ <span class="frac"><span class="num"><span class="v">P</span>(<span class="v">v</span>)</span><span class="den"><span class="v">P</span>(<span class="v">v</span> | σ)</span></span></div>
+<p>This holds for every v, so it holds for the smallest ratio, and P(σ) ≤ inf<sub>v</sub> P(v) / P(v | σ). <span class="rw-qed">∎</span></p>
+<p class="rw-proof-note">Short and simple, and yet it is the whole foundation: every conditional distribution on an observable is an event with a bounded, computable probability.</p>
+</div>
+</details>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Theorem 2 · Proof</span><span class="rw-proof-title">Looking closer can only lower the bound</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p><strong>Statement.</strong> If a random variable W extends V, meaning every preimage W<sup>−1</sup>(w) lies inside some V<sup>−1</sup>(v), then 𝒫(σ ≻ W) ≤ 𝒫(σ ≻ V). In particular, observing more variables, H = (V, Z), never raises the probability of a model.</p>
+<p><strong>Proof.</strong> Let R<sub>v</sub>(W) be the outcomes of W that lie inside V<sup>−1</sup>(v). Then P(v) = Σ<sub>w ∈ R<sub>v</sub></sub> P(w) and P(v | σ) = Σ<sub>w ∈ R<sub>v</sub></sub> P(w | σ). By Theorem 1 applied to W, P(w) ≥ P(w | σ) 𝒫(σ ≻ W) for every w. Summing over R<sub>v</sub>(W):</p>
+<div class="rw-eq"><span class="v">P</span>(<span class="v">v</span>) ≥ <span class="v">P</span>(<span class="v">v</span> | σ) · 𝒫(σ ≻ <span class="v">W</span>)</div>
+<p>so every ratio P(v) / P(v | σ) is at least 𝒫(σ ≻ W), and so is their infimum, 𝒫(σ ≻ V). <span class="rw-qed">∎</span></p>
+<p class="rw-proof-note">The more finely you look at a model, the more specified it becomes, and the less probable. The bound is relative to what you observe.</p>
+</div>
+</details>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Proposition · Proof</span><span class="rw-proof-title">The softmin is a lower bound, and tight as α → ∞</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>Write r<sub>v</sub> = P(v) / P(v | σ) and let r<sub>min</sub> be the smallest. For α &gt; 0 every term of the sum is positive, and one of them is r<sub>min</sub><sup>−α</sup>, so</p>
+<div class="rw-eq">Σ<sub><span class="v">v</span></sub> <span class="v">r</span><sub><span class="v">v</span></sub><sup>−α</sup> ≥ <span class="v">r</span><sub>min</sub><sup>−α</sup>   ⟹   <span class="v">P</span><sub>α</sub>(σ) = (Σ<sub><span class="v">v</span></sub> <span class="v">r</span><sub><span class="v">v</span></sub><sup>−α</sup>)<sup>−1/α</sup> ≤ <span class="v">r</span><sub>min</sub></div>
+<p>which is the bound of Theorem 1. On the other side, the sum is at most |R(V)| r<sub>min</sub><sup>−α</sup>, so P<sub>α</sub>(σ) ≥ |R(V)|<sup>−1/α</sup> r<sub>min</sub>, and |R(V)|<sup>−1/α</sup> → 1 as α → ∞. <span class="rw-qed">∎</span></p>
+</div>
+</details>
 <p>Read the theorem slowly. The ratio compares what the world believes about z, the prior, with what the model believes. The moment the model becomes very sure about one particular state, that state’s ratio gets small, and the model as a whole becomes improbable. So a confident, peaky model is an expensive model.</p>
 <figure class="rw-figure rw-figure-svg">
 <div aria-hidden="true" class="rw-bars" id="mpt-bars"></div>
@@ -464,6 +521,16 @@
           </div>
 <p>The first term is the cross entropy everyone already uses. The second is the regularizer. Nobody had to design it, it falls out of Kolmogorov’s axioms, it depends only on how the model behaves, and so it is invariant to reparameterization.</p>
 </aside>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Derivation</span><span class="rw-proof-title">From the intersection to cross entropy plus the regularizer</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>Write the intersection in its conditional form, ln P(M<sub>θ</sub>, M*) = ln P(M* | M<sub>θ</sub>) + ln P(M<sub>θ</sub>), and marginalize the first term over the observable z:</p>
+<div class="rw-eq">ln Σ<sub><span class="v">z</span></sub> <span class="v">P</span>(<span class="v">M</span>* | <span class="v">z</span>, <span class="v">M</span><sub>θ</sub>) <span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span><sub>θ</sub>)</div>
+<p>If the model and the oracle are independent given z, then P(M* | z, M<sub>θ</sub>) = P(z | M*) P(M*) / P(z). With a uniform prior on z, P(z) and P(M*) are constants and the objective is ln Σ<sub>z</sub> P(z | M*) P(z | M<sub>θ</sub>) + ln P(M<sub>θ</sub>). Replace P(M<sub>θ</sub>) by its softmin lower bound P<sub>α</sub>, and use Jensen’s inequality on the concave logarithm:</p>
+<div class="rw-eq">ln Σ<sub><span class="v">z</span></sub> <span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span>*) <span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span><sub>θ</sub>) ≥ Σ<sub><span class="v">z</span></sub> <span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span>*) ln <span class="v">P</span>(<span class="v">z</span> | <span class="v">M</span><sub>θ</sub>)</div>
+<p>The right hand side is the cross entropy. So intersection ≥ cross entropy + ln P<sub>α</sub>(M<sub>θ</sub>), and at α = 1 the regularizer is constant. <span class="rw-qed">∎</span></p>
+</div>
+</details>
 <p>That is what I mean by black box regularization: it comes in as one more term in the objective function, and it works on any model whose likelihood you can compute.</p>
 <aside aria-label="Theory" class="rw-theory rw-theory-forget">
 <p class="rw-theory-label">Theory · Forgetting is regularization</p>
@@ -527,6 +594,15 @@
 <p class="rw-big">Calculus is built on infinitesimals. A derivative asks how f changes in a neighbourhood of x, as the neighbourhood shrinks to nothing. What if the neighbourhood was a probability distribution instead, and never shrank to nothing?</p>
 <p>Imagine you want the minimum of a function that has no useful derivative. A staircase, for example: flat everywhere, with jumps. The gradient is zero on every step, and gradient descent just sits there. Or a function with noise on it, bounded, but with a first derivative that jumps around without limit. These are not exotic. They happen in practice all the time, every time something is quantized, counted or measured.</p>
 <p>So look at the function through a distribution. Sample around x, evaluate, and let the samples tell you which way is down. The learning rate is not a separate knob anymore, it is embedded in the variance of the distribution. And the distribution itself is a model, so MPT can regularize it: it keeps the neighbourhood from collapsing too early onto one point.</p>
+<div class="rw-open" role="note">
+<p class="rw-finding-label">The open problem</p>
+<p class="rw-open-big">How do we define the gradient in a neighbourhood, instead of in the one special neighbourhood called the infinitesimal?</p>
+<p>The derivative is built on variations of a function in a small neighbourhood, and calculus lets that neighbourhood shrink to a point. Let the neighbourhood be any probability distribution instead and the size of the variation is easy, the variance of f(x) over the neighbourhood tells you how much f changes. But a gradient is also a direction, and for a distributional neighbourhood we have no settled definition of it. A first, naive candidate:</p>
+<div aria-label="gradient equals the integral of x minus E x times the sign of f of x minus E f times p of x" class="rw-eq">
+            ∇ = ∫ (<span class="v">x</span> − E[<span class="v">x</span>]) · sign(<span class="v">f</span>(<span class="v">x</span>) − E[<span class="v">f</span>]) · <span class="v">p</span>(<span class="v">x</span>) d<span class="v">x</span>
+</div>
+<p>It works on the toys below, and the learning rate quietly disappears into the variance of p. The algorithm in the theory box is a better answer, derived from MPT. Whether there is a definition as clean as the limit in calculus is, for me, one of the most important open questions in optimization.</p>
+</div>
 <aside aria-label="Theory" class="rw-theory">
 <p class="rw-theory-label">Theory · The objective</p>
 <p>Let P(x | M<sub>θ</sub>) be the sampling distribution, and β &lt; 0 when we want to minimize f. The objective, generalized with the Maximum Probability Theorem, is</p>
@@ -549,6 +625,16 @@
 </ol>
 <p>L pulls the distribution toward the samples that did well. R pushes back against the samples the distribution already loves too much, which is MPT suppressing the most probable states again. The estimate is biased, it is importance sampling; rejection sampling would make it unbiased, at a price.</p>
 </aside>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Derivation</span><span class="rw-proof-title">The gradient of the objective</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>For the first term, the chain rule through ln P(x | M<sub>θ</sub>) gives a weighted average of the score:</p>
+<div class="rw-eq">∇<sub>θ</sub> ln Σ<sub><span class="v">x</span></sub> <span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>) <span class="v">e</span><sup>β<span class="v">f</span>(<span class="v">x</span>)</sup> = Σ<sub><span class="v">x</span></sub> <span class="frac"><span class="num"><span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>) <span class="v">e</span><sup>β<span class="v">f</span>(<span class="v">x</span>)</sup></span><span class="den">Σ<sub><span class="v">x</span>′</sub> <span class="v">P</span>(<span class="v">x</span>′ | <span class="v">M</span><sub>θ</sub>) <span class="v">e</span><sup>β<span class="v">f</span>(<span class="v">x</span>′)</sup></span></span> ∇<sub>θ</sub> ln <span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>)</div>
+<p>and for the MPT term, since ∇P<sup>α</sup> = α P<sup>α</sup> ∇ ln P,</p>
+<div class="rw-eq">∇<sub>θ</sub> <span class="frac"><span class="num">1</span><span class="den">α</span></span> ln Σ<sub><span class="v">x</span></sub> <span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>)<sup>α</sup> = Σ<sub><span class="v">x</span></sub> <span class="frac"><span class="num"><span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>)<sup>α</sup></span><span class="den">Σ<sub><span class="v">x</span>′</sub> <span class="v">P</span>(<span class="v">x</span>′ | <span class="v">M</span><sub>θ</sub>)<sup>α</sup></span></span> ∇<sub>θ</sub> ln <span class="v">P</span>(<span class="v">x</span> | <span class="v">M</span><sub>θ</sub>)</div>
+<p>Estimate both sums with the same N samples from P(x | M<sub>θ</sub>), dividing out the sampling probability, and the weights become exactly L<sub>i</sub> and R<sub>i</sub> of the algorithm. Both are probability vectors over the samples, so their difference G sums to zero. <span class="rw-qed">∎</span></p>
+</div>
+</details>
 <figure class="rw-figure rw-figure-svg">
 <svg aria-labelledby="po-t po-d" class="rw-svg" id="po-svg" role="img" viewbox="0 0 640 340">
 <title id="po-t">Probabilistic optimization on a staircase</title>
@@ -561,15 +647,22 @@
 <circle class="s-dot" id="po-mu" r="8"></circle>
 </svg>
 <div class="rw-control">
+<span aria-label="Objective" class="rw-chip-group" role="group">
+<button aria-pressed="true" class="rw-chip" data-po-obj="valleys" type="button">Two valleys, in steps</button>
+<button aria-pressed="false" class="rw-chip" data-po-obj="stairs" type="button">Discrete staircase</button>
+<button aria-pressed="false" class="rw-chip" data-po-obj="noisy" type="button">Super noisy</button>
+</span>
+</div>
+<div class="rw-control">
 <button aria-pressed="true" class="rw-chip" id="po-play" type="button">Pause</button>
 <button class="rw-chip" id="po-reset" type="button">Start again</button>
 <span aria-label="Regularization" class="rw-chip-group" role="group">
-<button aria-pressed="false" class="rw-chip" data-po-alpha="1" type="button">α = 1</button>
-<button aria-pressed="true" class="rw-chip" data-po-alpha="2" type="button">α = 2</button>
+<button aria-pressed="false" class="rw-chip" data-po-mpt="off" type="button">without MPT</button>
+<button aria-pressed="true" class="rw-chip" data-po-mpt="on" type="button">with MPT</button>
 </span>
 </div>
 <p aria-live="off" class="rw-readout" id="po-readout"></p>
-<figcaption>The function is x⁴ − 4x² + 2x, cut into steps, the same toy as in my notebook. Both start at x = 2, on the right, above the shallow valley. The blue dot is gradient descent: the steps are flat, so it never moves. The gold bell is the sampling distribution, following the algorithm above. Watch its width: it stays wide while there is something to find and narrows only when it has found it.</figcaption>
+<figcaption id="po-cap"></figcaption>
 </figure>
 <h3>Another view</h3>
 <p>In machine learning you can put the uncertainty on the observations instead of the parameters. Noise in the observations turns into a much more complicated noise in parameter space, and you never have to pretend the parameters are random variables. Write the model as an energy based model, P(x | M<sub>θ</sub>) ∝ e<sup>f(x; θ)</sup> P(x), and the MPT bound becomes the ratio of the average of e<sup>f</sup> to its maximum. Maximizing it forces f to be smooth. That is where energy based models, the Maximum Probability Theorem and probabilistic optimization become one framework.</p>
@@ -634,6 +727,16 @@
 <div aria-label="zero less than expected r over alpha less than two" class="rw-eq"> 0 &lt; E[ <span class="v">r</span>(<span class="v">v</span>) / α ] &lt; 2 </div>
 <p>So samples may carry integer weights, ⌊r/α⌋ plus a coin flip for the fraction, the running coefficient may turn negative, and α can be tuned while sampling without biasing anything, since α does not change the answer. α = E[r] converges fastest. The price is variance.</p>
 </aside>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Derivation · Proof</span><span class="rw-proof-title">The recursion, and when it converges</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>Write q as a reweighting of p by r = q / p, with δ<sub>v</sub> the point mass on v: q = Σ<sub>v</sub> p(v) r(v) δ<sub>v</sub> / Σ<sub>v</sub> p(v) r(v). Moving terms around and adding αq to both sides, for any α ≠ 0:</p>
+<div class="rw-eq">Σ<sub><span class="v">v</span></sub> <span class="v">p</span>(<span class="v">v</span>) <span class="big">(</span>(1 − <span class="v">r</span>(<span class="v">v</span>)/α) <span class="v">q</span> + (<span class="v">r</span>(<span class="v">v</span>)/α) δ<sub><span class="v">v</span></sub><span class="big">)</span> = <span class="v">q</span></div>
+<p>Unrolling it n times leaves a remainder E[1 − r/α]<sup>n</sup> q, a geometric factor. The series converges when |1 − E[r/α]| &lt; 1, that is, when</p>
+<div class="rw-eq">0 &lt; E[ <span class="v">r</span>(<span class="v">v</span>) / α ] &lt; 2</div>
+<p>Rejection sampling is the Monte Carlo version with an accept variable of probability r(v)/α, which needs 0 ≤ r(v)/α ≤ 1 for every v, a stricter condition. Since E<sub>p</sub>[r] = 1, the remainder vanishes in one step on average when α = E[r], the fastest rate. The same algebra on x f(x) = 1 gives f(x) = 1/α + ((α − x)/α) f(x), whose unrolling is the Taylor series of 1/x around α, convergent for 0 &lt; x/α &lt; 2. <span class="rw-qed">∎</span></p>
+</div>
+</details>
 <figure class="rw-figure rw-figure-svg">
 <svg aria-labelledby="taylor-t taylor-d" class="rw-svg" id="taylor-svg" role="img" viewbox="0 0 640 280">
 <title id="taylor-t">Taylor series of one over x</title>
@@ -679,9 +782,24 @@
 </figure>
 </section>
 <section aria-labelledby="tab-bica" class="rw-panel" hidden="" id="bica" role="tabpanel">
-<h2 class="rw-panel-title">Binary ICA</h2>
+<h2 class="rw-panel-title">Binary ICA: Bit Level AI</h2>
 <p class="rw-meta">Bit level learning with invertible gates. What I am working on now. Unpublished.</p>
 <p class="rw-big">There is a way to look at bitstrings, and there is hope to use our computation efficiently. Take a pile of bitstrings and find an invertible boolean function that makes the bits independent of each other.</p>
+<div class="rw-energy" role="note">
+<p class="rw-finding-label">Why bits: the way toward energy efficient AI</p>
+<p class="rw-energy-big">Why pack bits into real numbers and pay for expensive arithmetic, when NAND alone is universal?</p>
+<div class="rw-energy-cols">
+<div>
+<p class="rw-energy-h">How AI computes today</p>
+<p>Every value is a 16 or 32 bit floating point number. The model spends its energy multiplying and adding them in real valued space, and moving them in and out of memory. A single floating point multiplier is thousands of transistors, and most of the bits it carries are noise the task never needed.</p>
+</div>
+<div>
+<p class="rw-energy-h">How it could compute</p>
+<p>Any boolean function, and so any computation on bits, can be built from NAND gates alone. A gate is a handful of transistors. Build the model directly out of gates, learn which gates, and the model is the circuit: no floating point, no multiplications, a bit stored as a bit. That saves energy and memory at the root, not by compressing a real valued model afterwards.</p>
+</div>
+</div>
+<p class="rw-energy-foot">This is why I came back to bits. Binary ICA is the learning part: it finds gates that make the bits of the data independent, and MPT keeps it from memorizing.</p>
+</div>
 <p>This was one of my dearest research paths, and I came back to it. The premise is simple. A computer stores everything as bits anyway. In the world of bits the number of models is finite, there is no uncountable infinity of real valued fits to hide in, and the curse of dimensionality shows itself very vividly. You have to face it, which I think is healthy.</p>
 <aside aria-label="Theory" class="rw-theory">
 <p class="rw-theory-label">Theory · Sum of marginal entropies</p>
@@ -702,6 +820,14 @@
 </div>
 <figcaption>Left, the joint distribution of B and its marginal entropies. Right, after B′ = f(B). The joint entropy is the same on both sides, it is a bijection, but the sum of marginal entropies drops to meet it. Those saved bits are the compression.</figcaption>
 </figure>
+<details class="rw-proof">
+<summary><span class="rw-proof-tag">Proof</span><span class="rw-proof-title">The XOR makes the two bits independent</span><span class="rw-proof-hint">Show the proof</span></summary>
+<div class="rw-proof-body">
+<p>Let both bits be fair coins, with P(b₁ ≠ b₂) = a. Then P(00) = P(11) = (1 − a)/2 and P(01) = P(10) = a/2. Under f(b₁, b₂) = (b₁, b₁ ⊕ b₂), b₁′ = b₁ is still a fair coin and b₂′ = 1 exactly when the bits differ, so P(b₂′ = 1) = a. Check every state of B′:</p>
+<div class="rw-eq"><span class="v">P</span>(00) = ½(1 − <span class="v">a</span>) = <span class="v">P</span>(<span class="v">b</span>₁′ = 0) <span class="v">P</span>(<span class="v">b</span>₂′ = 0),   <span class="v">P</span>(01) = ½<span class="v">a</span> = <span class="v">P</span>(<span class="v">b</span>₁′ = 0) <span class="v">P</span>(<span class="v">b</span>₂′ = 1)</div>
+<p>and the same for the other two states, so the joint factorizes into the marginals and b₁′, b₂′ are independent. f is its own inverse, so nothing is lost: H(B′) = H(B) = 1 + H(a), and the sum of marginal entropies falls from 2 to 1 + H(a), meeting it. <span class="rw-qed">∎</span></p>
+</div>
+</details>
 <p>For n bits there are (2<sup>n</sup>)! bijections, and the data never has enough information to pick one honestly. That is the curse of dimensionality in its binary dress. I could compress, but I couldn’t generalize. The missing ingredient, I now know, was regularization, or forgetting. And the regularizer came from MPT.</p>
 <h3>A stack of invertible gates</h3>
 <p>Today the code is a stack of gates. Each one flips one bit plane where a small boolean function of its neighbourhood says so, T ← T ⊕ f(context), the same f at every pixel. The context reads other planes around the pixel and only the already decoded part of T itself, so every gate is invertible and the inverse is the stack run backwards. A gate is fitted by how much it lowers the sum of marginal entropies on the training images, and kept only if it lowers it on images it has never seen. MPT screens each condition: an event that is too rare to recur costs more information than it saves.</p>
@@ -926,6 +1052,105 @@
 <li><a href="https://github.com/AEMARV/FiniteTorch--2018-05-21" rel="noopener" target="_blank">FiniteTorch</a><span>KL and Bayes linear layers in PyTorch, with exact and sampled gradients. 2018</span></li>
 <li><a href="https://github.com/AEMARV/Folded-Coded-CNNs--2018-02-12" rel="noopener" target="_blank">Folded Coded CNNs</a><span>Early experiments on binary and folded CNNs. 2018</span></li>
 </ul>
+</section>
+<section aria-labelledby="tab-vehicles" class="rw-panel" hidden="" id="vehicles" role="tabpanel">
+<p class="rw-group-kicker">Applied ML</p>
+<h2 class="rw-panel-title">Vehicular Perception</h2>
+<p class="rw-meta">Cooperative perception between vehicles, and traffic vision on real roads.</p>
+<p class="rw-big">A theory of models is only worth something if it still holds on a highway at night, in the rain, with a truck in the way.</p>
+<h3>Cars that see for each other</h3>
+<p>As a coauthor with Ehsan Emad Marvasti, Yaser P. Fallah and colleagues, I worked on cooperative perception for connected vehicles. A car’s LIDAR cannot see through the truck in front of it, but the car on the other side of the truck can. The question is what they should share. Raw point clouds are too heavy for a wireless link, and final detections throw away what the other car half saw. Our answer was in between: share the <em>features</em> inside the detector network, align them, fuse them, and produce one detection from both points of view. A second paper made the sharing adapt to the link budget, sending less when the channel is narrow.</p>
+<figure class="rw-figure rw-figure-svg">
+<svg aria-labelledby="coop-t coop-d" class="rw-svg" id="coop-svg" role="img" viewbox="0 0 640 300">
+<title id="coop-t">Cooperative perception around an occluding truck</title>
+<desc id="coop-d">A road seen from above. Car A, on the left, cannot see a pedestrian hidden behind a truck. Car B, on the far side, can. With cooperation, Car B shares detector features over the wireless link and both cars detect the pedestrian.</desc>
+<rect class="s-road" height="110" rx="6" width="600" x="20" y="100"></rect>
+<line class="s-lane" x1="20" x2="620" y1="155" y2="155"></line>
+<path class="s-fov" d="M126 128 L250 92 L250 160 Z" id="coop-fov-a"></path>
+<path class="s-fov s-fov-b" d="M514 182 L330 96 L330 204 Z" id="coop-fov-b"></path>
+<rect class="s-truck" height="34" rx="5" width="90" x="250" y="112"></rect>
+<text class="s-label" text-anchor="middle" x="295" y="134">truck</text>
+<circle class="s-ped" cx="380" cy="132" id="coop-ped" r="8"></circle>
+<text class="s-label" text-anchor="middle" x="380" y="98">pedestrian</text>
+<rect class="s-car" height="22" rx="5" width="46" x="80" y="117"></rect><text class="s-name s-small" text-anchor="middle" x="103" y="166">A</text>
+<rect class="s-car s-car-b" height="22" rx="5" width="46" x="514" y="171"></rect><text class="s-name s-small" text-anchor="middle" x="537" y="226">B</text>
+<path class="s-link" d="M537 168 C 470 30, 170 30, 103 114" id="coop-link"></path>
+<text class="s-label s-accent" id="coop-link-t" text-anchor="middle" x="320" y="40">shared detector features</text>
+<rect class="s-detect" height="28" id="coop-box" rx="3" width="28" x="366" y="118"></rect>
+<text class="s-name s-small" id="coop-status" text-anchor="middle" x="320" y="270"></text>
+</svg>
+<div aria-label="Perception mode" class="rw-control rw-toggle" role="group">
+<button aria-pressed="false" class="rw-chip" data-coop="alone" type="button">Car A alone</button>
+<button aria-pressed="true" class="rw-chip" data-coop="coop" type="button">Cooperative</button>
+</div>
+<figcaption>An illustration. Alone, car A’s view stops at the truck. Cooperating, car B sends the features its detector computed, not its raw point cloud, and car A’s detector fuses them with its own.</figcaption>
+</figure>
+<p>The first paper won the Best Paper award at IEEE VTC 2020 Fall.</p>
+<ul class="rw-list">
+<li><a href="https://ieeexplore.ieee.org/abstract/document/9348723" rel="noopener" target="_blank">Cooperative LIDAR Object Detection via Feature Sharing in Deep Networks</a><span>IEEE VTC 2020 Fall, Best Paper. E. E. Marvasti, A. Raftari, A. E. Marvasti, Y. P. Fallah, R. Gao, H. Lu</span></li>
+<li><a href="https://ieeexplore.ieee.org/abstract/document/9334618" rel="noopener" target="_blank">Bandwidth Adaptive Feature Sharing for Cooperative LIDAR Object Detection</a><span>IEEE CAVS 2020. E. E. Marvasti, A. Raftari, A. E. Marvasti, Y. P. Fallah</span></li>
+<li><a href="https://arxiv.org/abs/2011.08317" rel="noopener" target="_blank">Feature Sharing and Integration for Cooperative Cognition and Perception with Volumetric Sensors</a><span>arXiv 2020. Multi agent fusion of volumetric features</span></li>
+</ul>
+<h3>Highway Eyes and Parkie</h3>
+<p>From 2022 to 2024 I was the founding engineer and principal AI scientist at Currus AI, and built Visioncube, the perception backend behind two products on real roads: Highway Eyes for the Central Florida Expressway Authority, and Parkie for the City of Winter Park. Camera streams come in, vehicles and people are detected and tracked, each camera is placed on the ground with a homography and GPS, and the tracks become counts, speeds, congestion, parking occupancy and alerts for crashes, stalled cars, objects on the road and wrong way drivers.</p>
+<figure class="rw-figure rw-figure-svg">
+<svg aria-labelledby="vc-t vc-d" class="rw-svg rw-svg-wide" id="vc-svg" role="img" viewbox="0 0 640 150">
+<title id="vc-t">The Visioncube pipeline</title>
+<desc id="vc-d">Cameras, then detection on the edge GPU, then multi object tracking, then projection to GPS on the ground plane, then analytics: Highway Eyes and Parkie.</desc>
+<defs><marker id="vc-arrow" markerheight="7" markerwidth="7" orient="auto" refx="9" refy="5" viewbox="0 0 10 10"><path d="M0 0 L10 5 L0 10 z" fill="#a8a8a8"></path></marker></defs>
+<g class="s-pipe">
+<rect height="60" rx="12" width="100" x="10" y="45"></rect><text class="s-label" text-anchor="middle" x="60" y="72">cameras</text><text class="s-label s-dim" text-anchor="middle" x="60" y="92">RTSP</text>
+<rect height="60" rx="12" width="100" x="138" y="45"></rect><text class="s-label" text-anchor="middle" x="188" y="72">detect</text><text class="s-label s-dim" text-anchor="middle" x="188" y="92">edge GPU</text>
+<rect height="60" rx="12" width="100" x="266" y="45"></rect><text class="s-label" text-anchor="middle" x="316" y="72">track</text><text class="s-label s-dim" text-anchor="middle" x="316" y="92">identities</text>
+<rect height="60" rx="12" width="100" x="394" y="45"></rect><text class="s-label" text-anchor="middle" x="444" y="72">to GPS</text><text class="s-label s-dim" text-anchor="middle" x="444" y="92">ground plane</text>
+<rect class="s-pipe-end" height="60" rx="12" width="110" x="522" y="45"></rect><text class="s-label s-accent" text-anchor="middle" x="577" y="72">Highway Eyes</text><text class="s-label s-accent" text-anchor="middle" x="577" y="92">Parkie</text>
+</g>
+<path class="s-arrow" d="M112 75 H136" marker-end="url(#vc-arrow)"></path><path class="s-arrow" d="M240 75 H264" marker-end="url(#vc-arrow)"></path>
+<path class="s-arrow" d="M368 75 H392" marker-end="url(#vc-arrow)"></path><path class="s-arrow" d="M496 75 H520" marker-end="url(#vc-arrow)"></path>
+</svg>
+<figcaption>From camera to decision. Speed comes from a Kalman filter on the tracks; a learned blacklist removes things that only look like vehicles.</figcaption>
+</figure>
+<p>The research side showed up where it always does, at the edges of the training data. When lighting and weather left the scenes the detector was trained on, it was updated online, with a probabilistic uncertainty on each update, so the system could tell when it was outside its world. That is the out of distribution question again, this time with traffic in it.</p>
+</section>
+<section aria-labelledby="tab-geoopinions" class="rw-panel" hidden="" id="geoopinions" role="tabpanel">
+<p class="rw-group-kicker">Platforms</p>
+<h2 class="rw-panel-title">Geography of Opinions</h2>
+<p class="rw-meta">A geographic social network. Organic, suggestion free, AI free. Since October 2024.</p>
+<p class="rw-big">After years of research in AI, I built a social network with no AI in it at all.</p>
+<p>We have all this technology and still no public platform, with public stakes, to organize ourselves politically and geographically. Geography of Opinions is that attempt: people vote and state opinions on a map, and how information flows through the network stays in their hands. There is no recommendation system deciding what you see, no model ranking your neighbours for you.</p>
+<p>It comes from the same place as the research. Technology reduces the continuum of reality to a finite set of letters, whether in a science book or bits in a computer. Used well, that reduction serves the part of our rational mind that wants to organize, and here it serves how we organize ourselves on the ground, with 8 billion people and a phone in every hand.</p>
+<div class="rw-gallery rw-gallery-2">
+<figure class="rw-figure rw-paper rw-paper-dark">
+<img alt="Geography of Opinions: a map view comparing the similarity of opinions between places." decoding="async" loading="lazy" src="/assets/img/Screenshot-from-2026-10-11-12-23-58-d85fd8.webp"/>
+<figcaption>Similarities between places, drawn from the opinions of the people in them.</figcaption>
+</figure>
+</div>
+<p class="rw-links"><a href="https://www.geoOpinions.com" rel="noopener" target="_blank">Visit geoOpinions.com</a>   <a href="/geography-of-opinions">Read the philosophy</a></p>
+</section>
+<section aria-labelledby="tab-artament" class="rw-panel" hidden="" id="artament" role="tabpanel">
+<p class="rw-group-kicker">Platforms</p>
+<h2 class="rw-panel-title">Artament</h2>
+<p class="rw-meta">A platform for art institutions and their artists. Coming soon.</p>
+<p class="rw-big">Every artist gets an identity for life, every artwork a permanent identity, and the institutions that know the work vouch for it.</p>
+<p>Artament gives an art institution, a foundation, a museum or a gallery, a public site it designs itself and a dashboard to run its people, events and verifications. Each artist gets an Artist ID and a studio of their own. Every artwork becomes an art item with a permanent Art ID. Institutions verify that a work is original and that its details are right, and once it is verified the artist sets its price.</p>
+<figure class="rw-figure rw-figure-svg">
+<svg aria-labelledby="art-t art-d" class="rw-svg rw-svg-wide" id="art-svg" role="img" viewbox="0 0 640 170">
+<title id="art-t">Artist, artwork and institution in Artament</title>
+<desc id="art-d">An artist with an Artist ID creates an artwork with an Art ID. An institution verifies the artwork. The artist then prices the verified work.</desc>
+<defs><marker id="art-arrow" markerheight="7" markerwidth="7" orient="auto" refx="9" refy="5" viewbox="0 0 10 10"><path d="M0 0 L10 5 L0 10 z" fill="#a8a8a8"></path></marker></defs>
+<g class="s-pipe">
+<rect height="70" rx="35" width="150" x="20" y="50"></rect><text class="s-label" text-anchor="middle" x="95" y="82">artist</text><text class="s-label s-accent" text-anchor="middle" x="95" y="102">Artist ID</text>
+<rect class="s-pipe-end" height="70" rx="12" width="150" x="245" y="50"></rect><text class="s-label" text-anchor="middle" x="320" y="82">artwork</text><text class="s-label s-accent" text-anchor="middle" x="320" y="102">Art ID</text>
+<rect height="70" rx="12" width="150" x="470" y="50"></rect><text class="s-label" text-anchor="middle" x="545" y="82">institution</text><text class="s-label s-dim" text-anchor="middle" x="545" y="102">verifies</text>
+</g>
+<path class="s-arrow" d="M172 85 H243" marker-end="url(#art-arrow)"></path><text class="s-label s-dim" text-anchor="middle" x="207" y="74">creates</text>
+<path class="s-arrow" d="M468 85 H397" marker-end="url(#art-arrow)"></path><text class="s-label s-dim" text-anchor="middle" x="432" y="74">vouches</text>
+<path class="s-thread" d="M320 122 C 320 160, 95 160, 95 124"></path><text class="s-label s-dim" text-anchor="middle" x="207" y="162">then the artist prices it</text>
+</svg>
+<figcaption>The three identities at the heart of Artament.</figcaption>
+</figure>
+<p>Every page on Artament is data, its words and its look, so one platform can serve many institutions, and the people who own a page design it. This website has a twin there: Qualia In Dualia is one of its artist studios.</p>
+<p class="rw-links"><a href="https://artament.com" rel="noopener" target="_blank">artament.com</a></p>
 </section>
 </div>
 </div>
