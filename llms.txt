@@ -1,0 +1,32 @@
+# Amir Emad Marvasti: AI research
+
+> Amir Emad Marvasti is an AI research scientist and artist. His research is in probabilistic machine learning: the Maximum Probability Theorem (MPT), which gives every model a probability computed from its behaviour alone, and from it a black box regularization for any model whose likelihood can be computed. In this view regularization is forgetting: maximizing the probability of a model removes its information content, −log P(M).
+
+## Key ideas
+
+- Maximum Probability Theorem: for any event M with conditional distribution P(z | M) on an observable Z, P(M) ≤ min over z of P(z) / P(z | M). A model is an event in the probability space, not a point in parameter space. Only a prior on the observables is needed, never a prior on the parameters, and the result is invariant to reparameterization.
+- The training objective is the probability of the intersection of the model and the true model, which splits into the likelihood (cross entropy) plus log P(M), the regularizer.
+- Forgetting is regularization: −log P(M) is the information content of the model; maximizing P(M) makes the model forget what it does not need.
+- Empirical result (Out of Distribution Detection, Generalization, and Robustness Triangle with Maximum Probability Theorem, 2022): 1080 CNNs trained without hyperparameter tuning (3 datasets × 3 objectives × 3 batch sizes × 8 values of the MPT parameter α × 5 repeats). As α increases, the mean test accuracy rises and its variance falls on CIFAR10, CIFAR100 and MNIST; robustness to input noise and out of distribution detection (max energy score, AUROC up to 0.866 with a 12 layer CNN) improve as well.
+- Generalized rejection sampling: rejection sampling is a Monte Carlo form of the Taylor expansion of division; the acceptance rate equals the MPT bound, the probability of the model. The generalized sampler allows signed weights and tunes its constant while sampling.
+- Probabilistic optimization: derivative free optimization through a sampling distribution, regularized by MPT so the neighbourhood does not collapse early.
+- Finite state networks (FKNN): CNN layers derived as Bayesian classifiers on finite state distributions; LNorm and ExpNorm appear as rotated ReLU and Sigmoid.
+- Binary ICA (current work): invertible boolean gates that make bits independent, regularized by MPT; lossless, with a 0.003 bit train to test gap on CIFAR10.
+
+## Pages
+
+- [Research hub](https://www.qualiadualia.com/research): a map of the research and where to start.
+- [The research, explained with demos](https://www.qualiadualia.com/research-work): the Maximum Probability Theorem, the 1080 network study, probabilistic optimization, generalized rejection sampling, Binary ICA, out of distribution detection, finite state networks, dissertation, papers and code.
+- [Research biography](https://www.qualiadualia.com/research-bio): the personal story of the research.
+- [Qualia In Dualia](https://www.qualiadualia.com/): the artist's site.
+
+## Papers
+
+- [Maximum Probability Theorem: A Framework for Probabilistic Machine Learning](https://www.computer.org/csdl/journal/ai/2021/03/09446965/1ua0q5D18Yg), IEEE Transactions on Artificial Intelligence, 2021.
+- [Out of Distribution Detection, Generalization, and Robustness Triangle with Maximum Probability Theorem](https://arxiv.org/abs/2203.12145), ICECCME 2022.
+- [Rediscovering Deep Neural Networks Through Finite-State Distributions](https://arxiv.org/abs/1809.10073), IEEE Access.
+- [Maximum Probability Framework and Digital Probabilistic Models](https://stars.library.ucf.edu/etd2020/1134/), PhD dissertation, University of Central Florida, 2021.
+
+## Code
+
+- [GitHub: AEMARV](https://github.com/AEMARV)

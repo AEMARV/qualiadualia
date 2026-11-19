@@ -150,11 +150,14 @@
     restart();
   });
 
-  /* Site-wide fade-in, matching the original's "fade" animation. */
+  /* Fade-in. Everything already on screen is shown at once by CSS (site.css staggers it
+     piece by piece from the first paint, no waiting for this script). Only blocks that are
+     still below the fold are hidden here and revealed as they scroll into view. */
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduce && "IntersectionObserver" in window) {
+    var fold = window.innerHeight * 1.05;
     var targets = document.querySelectorAll(
-      "main .sqs-html-content > *, main .fluid-image-animation-wrapper, .header-nav-item > a, .header-title"
+      "main .sqs-html-content > *, main .fluid-image-animation-wrapper"
     );
     var io = new IntersectionObserver(function (entries) {
       var i = 0;
@@ -162,13 +165,14 @@
         if (!e.isIntersecting) return;
         var el = e.target;
         el.style.transitionTimingFunction = "ease";
-        el.style.transitionDuration = "0.9s";
-        el.style.transitionDelay = (i++ * 0.006) + "s";
+        el.style.transitionDuration = "0.5s";
+        el.style.transitionDelay = (i++ * 0.04) + "s";
         el.classList.add("fadeIn");
         io.unobserve(el);
       });
-    }, { rootMargin: "0px 0px -5% 0px" });
+    }, { rootMargin: "0px 0px -4% 0px" });
     Array.prototype.forEach.call(targets, function (el) {
+      if (el.getBoundingClientRect().top < fold) return;
       el.classList.add("preFade");
       io.observe(el);
     });
