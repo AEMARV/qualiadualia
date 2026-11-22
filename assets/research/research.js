@@ -118,6 +118,8 @@
         e.setAttribute("cx", M.cx.toFixed(1)); e.setAttribute("rx", M.rx.toFixed(1)); e.setAttribute("ry", M.ry.toFixed(1));
       });
       lab.setAttribute("x", (M.cx - 70).toFixed(1));
+      var shine = document.getElementById("mpt-m-shine");
+      if (shine) shine.setAttribute("transform", "translate(" + M.cx.toFixed(1) + " 0)");
       var both = 0, star = 0;
       for (var x = 270; x <= 530; x += 4) for (var y = 60; y <= 270; y += 4) {
         if (inside(x, y, S)) { star += 1; if (inside(x, y, M)) both += 1; }
@@ -339,7 +341,7 @@
       return d;
     }
     xs.forEach(function () {
-      var c = el("circle", { r: 5, fill: "#fff" }, pts);
+      var c = el("circle", { r: 5.5, "class": "s-pt" }, pts);
       c.style.transition = reduceMotion ? "none" : "cy 0.6s ease";
     });
     function draw(on) {

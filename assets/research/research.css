@@ -533,3 +533,161 @@ body.rw-body main#page { background: #000; max-width: none; }
 @media (prefers-reduced-motion: reduce) { .s-link { animation: none; } }
 .i-fill-grey { fill: #d8d8d8; }
 .i-fill-blue { fill: #6f9ec2; }
+
+/* Glass */
+/* The figures as glass: panels with light in their corners, and marks (beads, bars, tubes, lenses, boxes)
+   filled from the gradients of .rw-defs. Each fill names a plain colour after its gradient, used where the
+   gradients aren't there. */
+.rw-panel {
+  background:
+    radial-gradient(90% 40% at 0% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)), #050505;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.rw-figure-svg {
+  position: relative; border-radius: 22px; padding: 24px 24px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.075), transparent 60%),
+    radial-gradient(90% 70% at 100% 100%, rgba(241, 213, 74, 0.075), transparent 65%),
+    radial-gradient(70% 60% at 88% 0%, rgba(111, 158, 194, 0.06), transparent 60%),
+    linear-gradient(165deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), inset 0 -1px 0 rgba(255, 255, 255, 0.03), 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+}
+.rw-aside {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.rw-theory {
+  background:
+    radial-gradient(110% 90% at 0% 0%, rgba(241, 213, 74, 0.1), transparent 60%),
+    linear-gradient(180deg, rgba(241, 213, 74, 0.05), rgba(241, 213, 74, 0.012));
+  border-color: rgba(241, 213, 74, 0.2); border-left-color: #f1d54a;
+  box-shadow: inset 0 1px 0 rgba(255, 244, 176, 0.1), 0 18px 50px rgba(241, 213, 74, 0.04);
+}
+
+/* Lines: finer, so the glass carries the weight */
+.s-frame { fill: url(#gl-box) rgba(255, 255, 255, 0.02); stroke: rgba(255, 255, 255, 0.28); stroke-width: 1; }
+.s-dash { stroke: rgba(255, 255, 255, 0.24); stroke-width: 1; stroke-dasharray: 3 6; }
+.s-axis { stroke: rgba(255, 255, 255, 0.32); stroke-width: 1; }
+.s-ticks line { stroke: rgba(255, 255, 255, 0.32); stroke-width: 1; }
+.s-true { stroke: rgba(255, 255, 255, 0.86); stroke-width: 1.3; }
+.s-stair { stroke: rgba(255, 255, 255, 0.86); stroke-width: 1.4; }
+.s-ghost { stroke: rgba(255, 255, 255, 0.24); stroke-width: 1; }
+.s-curve { stroke-width: 2.2; filter: drop-shadow(0 0 5px rgba(241, 213, 74, 0.6)); }
+.s-arrow { stroke: rgba(255, 255, 255, 0.55); stroke-width: 1.2; stroke-dasharray: 4 6; animation: rw-stream 1.5s linear infinite; }
+.s-thread { stroke-width: 1.2; stroke-dasharray: 4 6; animation: rw-stream 1.5s linear infinite; }
+@keyframes rw-stream { to { stroke-dashoffset: -20; } }
+
+/* Lenses: the events of the first figure */
+.s-star { fill: url(#gl-lens-clear) rgba(255, 255, 255, 0.05); stroke: rgba(255, 255, 255, 0.72); stroke-width: 1.2; }
+.s-model { fill: url(#gl-lens-gold) rgba(241, 213, 74, 0.1); stroke: rgba(241, 213, 74, 0.92); stroke-width: 1.4; filter: drop-shadow(0 0 12px rgba(241, 213, 74, 0.22)); }
+.s-meet { fill: #f1d54a; fill-opacity: 0.3; }
+.s-shine { fill: none; stroke: url(#gl-shine) rgba(255, 255, 255, 0.5); stroke-width: 3; stroke-linecap: round; pointer-events: none; }
+
+/* Beads */
+.s-dot { fill: url(#gl-gold-orb) #f1d54a; stroke: rgba(255, 246, 190, 0.85); stroke-width: 0.8; filter: drop-shadow(0 0 7px rgba(241, 213, 74, 0.7)); }
+.s-dot-blue { fill: url(#gl-blue-orb) #6f9ec2; stroke: rgba(214, 234, 248, 0.85); stroke-width: 0.8; filter: drop-shadow(0 0 7px rgba(111, 158, 194, 0.75)); }
+.s-samp { fill: url(#gl-gold-orb) #f1d54a; opacity: 0.85; }
+.s-drop-acc { fill: url(#gl-gold-orb) #f1d54a; filter: drop-shadow(0 0 4px rgba(241, 213, 74, 0.65)); }
+.s-drop-rej { fill: url(#gl-clear-orb) #6f6f6f; stroke: rgba(255, 255, 255, 0.35); stroke-width: 0.6; }
+.s-pt { fill: url(#gl-clear-orb) #fff; stroke: rgba(255, 255, 255, 0.85); stroke-width: 0.8; filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); }
+.s-ood circle { fill: url(#gl-clear-orb) #000; stroke: rgba(255, 255, 255, 0.8); stroke-width: 1; }
+.s-tl circle { fill: url(#gl-clear-orb) #000; stroke: rgba(255, 255, 255, 0.75); stroke-width: 1; }
+.s-tl .s-tl-main { fill: url(#gl-gold-orb) #f1d54a; stroke: rgba(255, 246, 190, 0.85); filter: drop-shadow(0 0 9px rgba(241, 213, 74, 0.7)); }
+.s-tl .s-tl-now { fill: url(#gl-blue-orb) #6f9ec2; stroke: rgba(214, 234, 248, 0.85); filter: drop-shadow(0 0 9px rgba(111, 158, 194, 0.7)); }
+.s-ped { fill: url(#gl-clear-orb) #fff; stroke: #fff; stroke-width: 1; filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6)); }
+.s-ped-hidden { fill: rgba(255, 255, 255, 0.12); stroke: rgba(255, 255, 255, 0.3); filter: none; }
+
+/* Bars and tubes */
+.s-target { fill: url(#gl-tube) rgba(255, 255, 255, 0.03); stroke: rgba(255, 255, 255, 0.45); stroke-width: 1; stroke-dasharray: 4 4; }
+.s-acc { fill: url(#gl-gold-bar) #f1d54a; stroke: rgba(255, 244, 176, 0.55); stroke-width: 0.8; }
+.s-neg { fill: url(#gl-blue-bar) #6f9ec2; stroke: rgba(214, 234, 248, 0.5); stroke-width: 0.8; }
+.s-hbar { fill: url(#gl-grey-bar) #4a4a4a; stroke: rgba(255, 255, 255, 0.28); stroke-width: 0.8; }
+.s-hbar-gold { fill: url(#gl-gold-bar) #f1d54a; stroke: rgba(255, 244, 176, 0.5); stroke-width: 0.8; filter: drop-shadow(0 0 8px rgba(241, 213, 74, 0.3)); }
+.s-hbar-blue { fill: url(#gl-blue-bar) #6f9ec2; stroke: rgba(214, 234, 248, 0.5); stroke-width: 0.8; }
+.s-marker { fill: url(#gl-gold-bar) #f1d54a; fill-opacity: 1; stroke: rgba(255, 244, 176, 0.6); stroke-width: 0.8; filter: drop-shadow(0 0 8px rgba(241, 213, 74, 0.4)); }
+.s-bell { fill: url(#gl-under-gold) rgba(241, 213, 74, 0.16); stroke-width: 1.5; filter: drop-shadow(0 0 8px rgba(241, 213, 74, 0.3)); }
+.s-band { fill: rgba(111, 158, 194, 0.1); stroke: rgba(111, 158, 194, 0.3); stroke-width: 1; }
+
+/* Boxes and cells */
+.s-box { fill: url(#gl-box) #141414; stroke: rgba(255, 255, 255, 0.38); stroke-width: 1; }
+.s-box-accent { fill: url(#gl-box-gold) #141414; stroke: rgba(241, 213, 74, 0.85); }
+.s-stack rect { fill: url(#gl-box) #141414; stroke: rgba(255, 255, 255, 0.4); stroke-width: 1; }
+.s-stack-out rect { fill: url(#gl-box-gold) #141414; stroke: rgba(241, 213, 74, 0.85); }
+.s-pipe rect { fill: url(#gl-box) #121212; stroke: rgba(255, 255, 255, 0.36); stroke-width: 1; }
+.s-pipe .s-pipe-end { fill: url(#gl-box-gold) #121212; stroke: rgba(241, 213, 74, 0.85); }
+.s-cell { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.2); }
+.s-cell-on { fill: rgba(255, 255, 255, 0.15); }
+.s-cell-ctx { fill: url(#gl-box-gold) rgba(241, 213, 74, 0.35); stroke: rgba(241, 213, 74, 0.9); }
+.s-cell-t { fill: rgba(0, 0, 0, 0.45); stroke: #fff; stroke-width: 2; }
+.s-block { fill: rgba(255, 255, 255, 0.025); stroke: rgba(255, 255, 255, 0.1); }
+.s-block-key { fill: url(#gl-box) #161616; stroke: rgba(255, 255, 255, 0.24); }
+.s-road { fill: rgba(255, 255, 255, 0.03); stroke: rgba(255, 255, 255, 0.1); }
+
+/* The eight states: glass columns against a fine dashed prior */
+.rw-bar .prior {
+  border: 1px dashed rgba(255, 255, 255, 0.4); border-bottom: 0; border-radius: 9px 9px 0 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.07), transparent 24%, transparent 80%, rgba(255, 255, 255, 0.04));
+}
+.rw-bar .model {
+  opacity: 0.85; border-radius: 9px 9px 2px 2px; border: 1px solid rgba(255, 244, 176, 0.5);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.32), transparent 24%, transparent 78%, rgba(255, 255, 255, 0.12)),
+    linear-gradient(180deg, rgba(241, 213, 74, 0.85), rgba(241, 213, 74, 0.22));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 22px rgba(241, 213, 74, 0.14);
+}
+.rw-bar.is-min .model { opacity: 1; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 30px rgba(241, 213, 74, 0.5); }
+.rw-copula .pbar {
+  height: 9px; border-radius: 99px; border: 1px solid rgba(255, 244, 176, 0.5);
+  background: linear-gradient(180deg, rgba(255, 246, 196, 0.95), rgba(241, 213, 74, 0.5));
+  box-shadow: 0 0 10px rgba(241, 213, 74, 0.25);
+}
+.rw-copula th, .rw-copula td { border-bottom-color: rgba(255, 255, 255, 0.09); }
+
+/* Sliders: a groove in the glass and a bead that rides it */
+.rw-control input[type="range"] { -webkit-appearance: none; appearance: none; height: 24px; margin: 0; background: none; cursor: pointer; }
+.rw-control input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 99px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.2));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.rw-control input[type="range"]::-moz-range-track {
+  height: 6px; border-radius: 99px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.2));
+}
+.rw-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; border: 1px solid rgba(255, 246, 190, 0.8);
+  background: radial-gradient(circle at 34% 30%, #fffdf0, #f9e88e 28%, rgba(241, 213, 74, 0.82) 66%, #b8952a);
+  box-shadow: 0 0 14px rgba(241, 213, 74, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.22);
+}
+.rw-control input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(255, 246, 190, 0.8);
+  background: radial-gradient(circle at 34% 30%, #fffdf0, #f9e88e 28%, rgba(241, 213, 74, 0.82) 66%, #b8952a);
+  box-shadow: 0 0 14px rgba(241, 213, 74, 0.5);
+}
+.rw-control input[type="range"]:disabled { opacity: 0.45; cursor: default; }
+
+/* The hub: beads in orbit round a glass sun, light running along the spokes */
+.rh-node circle { fill: url(#gl-clear-orb) #000; stroke: rgba(255, 255, 255, 0.78); stroke-width: 1; }
+.rh-node:hover circle, .rh-node:focus circle, .rh-node.is-on circle { fill: url(#gl-gold-orb) #f1d54a; stroke: rgba(255, 246, 190, 0.9); filter: drop-shadow(0 0 10px rgba(241, 213, 74, 0.7)); }
+.rh-node-now circle { stroke: rgba(143, 182, 212, 0.95); }
+.rh-node-now:hover circle, .rh-node-now.is-on circle, .rh-node-now:focus circle { fill: url(#gl-blue-orb) #6f9ec2; stroke: rgba(214, 234, 248, 0.9); filter: drop-shadow(0 0 10px rgba(111, 158, 194, 0.75)); }
+.rh-node-main circle.rh-sun, .rh-node-main:hover circle.rh-sun, .rh-node-main.is-on circle.rh-sun, .rh-node-main:focus circle.rh-sun { fill: url(#rh-sun); stroke: rgba(255, 246, 190, 0.55); stroke-width: 1; }
+.rh-node circle.rh-halo, .rh-node:hover circle.rh-halo, .rh-node.is-on circle.rh-halo, .rh-node:focus circle.rh-halo { filter: none; }
+.rh-sun-shine { fill: none; stroke: url(#gl-shine) rgba(255, 255, 255, 0.5); stroke-width: 4; stroke-linecap: round; pointer-events: none; }
+.rh-spoke { stroke: rgba(255, 255, 255, 0.3); stroke-dasharray: 2 6; animation: rw-spoke 2.4s linear infinite; }
+@keyframes rw-spoke { to { stroke-dashoffset: 16; } }
+.rh-card {
+  background: radial-gradient(110% 80% at 0% 0%, rgba(255, 255, 255, 0.06), transparent 60%), linear-gradient(165deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border-color: rgba(255, 255, 255, 0.1); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.rh-card:hover, .rh-card:focus-visible { border-color: rgba(241, 213, 74, 0.55); transform: none; box-shadow: inset 0 1px 0 rgba(255, 244, 176, 0.18), 0 0 40px rgba(241, 213, 74, 0.07); }
+.rh-card-now { border-color: rgba(111, 158, 194, 0.3); }
+.rh-step-n {
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06) 45%, rgba(255, 255, 255, 0.02) 70%, rgba(255, 255, 255, 0.22)), #0a0a0a;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.rh-step-key .rh-step-n { background: radial-gradient(circle at 34% 30%, #fffdf0, #f9e88e 28%, #f1d54a 62%, #b8952a); }
+
+@media (max-width: 900px) { .rw-figure-svg { padding: 14px 10px; border-radius: 18px; } }
+@media (prefers-reduced-motion: reduce) { .s-arrow, .s-thread, .rh-spoke { animation: none; } }
